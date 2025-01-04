@@ -74,7 +74,7 @@ const LoginPage = ({ navigation }) => {
               />
               {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
-              <Button title="Login" onPress={handleSubmit} color="#FF7043" />
+              <Button title="Login" onPress={() => navigation.navigate('Home')} color="#FF7043" />
 
               <TouchableOpacity onPress={() => navigation.navigate('SignUpPage')}>
                 <Text style={styles.signupText}>Don't have an account? Sign up</Text>
