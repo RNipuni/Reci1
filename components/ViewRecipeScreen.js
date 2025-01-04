@@ -13,7 +13,7 @@ const ViewRecipeScreen = ({ route, navigation }) => {
       <Text style={styles.label}>Ingredients:</Text>
       <Text style={styles.text}>{recipe.ingredients}</Text>
       <Text style={styles.label}>Instructions:</Text>
-      <Text style={styles.text}>{recipe.Instructions}</Text>
+      <Text style={styles.text}>{recipe.instructions}</Text>
       <Text style={styles.label}>Recipe Image:</Text>
       {recipe.image ? (
         <Image
@@ -24,15 +24,15 @@ const ViewRecipeScreen = ({ route, navigation }) => {
         <Text style={styles.text}>No image available</Text>
       )}
       
-      <Button title="Go Back" onPress={() => navigation.goBack()} />
+      <Button title="Go Back" onPress={() => navigation.goBack()} color="#FF6347" /> {/* Red color for the button */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: { flex: 1, padding: 16, backgroundColor: '#FAF3E0' }, // Light cream background
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
-  image: { width: '100%', height: 200, marginBottom: 16 },
+  image: { width: '100%', height: 200, marginBottom: 16, borderRadius: 10 }, // Rounded corners for the image
   label: { fontSize: 18, fontWeight: 'bold', marginTop: 16 },
   text: { fontSize: 16, marginTop: 8 },
 });

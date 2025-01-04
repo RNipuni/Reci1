@@ -29,35 +29,53 @@ const HomeScreen = ({ navigation }) => {
         data={recipes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.recipe}>
-            <Text>{item.name}</Text>
+          <View style={styles.recipeCard}>
+            <Text style={styles.recipeName}>{item.name}</Text>
             {item.image && <Image source={{ uri: item.image }} style={styles.image} />}
-            <Button
-              title="Edit Recipe"
-              onPress={() => navigation.navigate('EditRecipeForm', {recipe:item,editRecipe })}
-            />
-            <Button
-              title="View Recipe"
-              onPress={() => navigation.navigate('ViewRecipeScreen', { recipe: item })}
-            />
-            <Button title="Delete Recipe" onPress={() => deleteRecipe(item.id)} />
-              
+            <View style={styles.buttonsContainer}>
+              <Button
+                title="Edit Recipe"
+                color="#FFA07A" // Light salmon color
+                onPress={() => navigation.navigate('EditRecipeForm', { recipe: item, editRecipe })}
+              />
+              <Button
+                title="View Recipe"
+                color="#90EE90" // Light green color
+                onPress={() => navigation.navigate('ViewRecipeScreen', { recipe: item })}
+              />
+              <Button
+                title="Delete Recipe"
+                color="#FF6347" // Tomato color
+                onPress={() => deleteRecipe(item.id)}
+              />
+            </View>
           </View>
-          
         )}
       />
       <Button
         title="Add New Recipe"
-        onPress={() => navigation.navigate('AddRecipe', { addRecipe })} // Navigate to AddRecipeForm
+        color="#FF7043" // Deep sky blue color
+        onPress={() => navigation.navigate('AddRecipe', { addRecipe })}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
-  recipe: { marginBottom: 8 },
-  image: { width: 100, height: 100, marginBottom: 8 },
+  container: { flex: 1, padding: 16, backgroundColor: '#FAF3E0' }, // Light cream background
+  recipeCard: {
+    backgroundColor: '#FFF8DC', // Light wheat color
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  recipeName: { fontSize: 18, fontWeight: 'bold', color: '#333' },
+  image: { width: 100, height: 100, marginVertical: 8, alignSelf: 'center' },
+  buttonsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 },
 });
 
 export default HomeScreen;
