@@ -12,6 +12,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 const LoginPage = ({ navigation }) => {
+  // Validation schema using Yup
   const validationSchema = Yup.object({
     email: Yup.string().email('Invalid email format').required('Email is required'),
     password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
@@ -19,7 +20,7 @@ const LoginPage = ({ navigation }) => {
 
   const handleLogin = async (values) => {
     const { email, password } = values;
-
+  
     try {
       const response = await fetch('https://your-backend-api.com/login', {
         method: 'POST',
@@ -28,12 +29,12 @@ const LoginPage = ({ navigation }) => {
         },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         Alert.alert('Login Successful!', `Welcome, ${data.name}`);
-        navigation.navigate('Home');
+        navigation.navigate('Home'); // Correct navigation
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid email or password');
       }
@@ -41,6 +42,8 @@ const LoginPage = ({ navigation }) => {
       Alert.alert('Error', 'An error occurred. Please try again.');
     }
   };
+  
+  
 
   return (
     <View style={styles.container}>
@@ -50,7 +53,7 @@ const LoginPage = ({ navigation }) => {
           validationSchema={validationSchema}
           onSubmit={handleLogin}
         >
-          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          {({ handleChange, handleBlur, handleLogin, values, errors, touched }) => (
             <>
               <Text style={styles.header}>Welcome to RecipeApp</Text>
 

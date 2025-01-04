@@ -18,11 +18,29 @@ const SignUpPage = ({ navigation }) => {
     password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
   });
 
-  const handleSignUp = (values) => {
+  const handleSignUp = async (values) => {
     const { name, email, password } = values;
 
-    Alert.alert('Account Created!', `Welcome, ${name}`);
-    navigation.navigate('Login'); // Navigate to the Login page after successful signup
+    try {
+      const response = await fetch('https://your-backend-api.com/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Account Created!', `Welcome, ${data.name}`);
+        navigation.navigate('LoginPage'); 
+      } else {
+        Alert.alert('Sign Up Failed', data.message || 'Something went wrong');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred. Please try again.');
+    }
   };
 
   return (
@@ -65,7 +83,7 @@ const SignUpPage = ({ navigation }) => {
             />
             {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
 
-            <Button title="Sign Up" onPress={() => navigation.navigate('Home')} color="#FF7043" />
+            <Button title="Sign Up" onPress={() => navigation.navigate('LoginPage')} color="#FF7043" />
 
             <TouchableOpacity onPress={() => navigation.navigate('LoginPage')}>
               <Text style={styles.loginText}>Already have an account? Login</Text>
@@ -82,23 +100,23 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#E0E0E0', // Light pink background
+    backgroundColor: '#E0E0E0', 
   },
   header: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#FF7043', // Deep Red header text
+    color: '#FF7043', 
   },
   input: {
     height: 50,
-    borderColor: '#FF7043', // Deep Red input border
+    borderColor: '#FF7043', 
     borderWidth: 1,
     borderRadius: 12,
     marginBottom: 15,
     paddingHorizontal: 15,
-    backgroundColor: '#E0E0E0', // Off-white background for inputs
+    backgroundColor: '#E0E0E0', 
   },
   error: {
     color: 'red',

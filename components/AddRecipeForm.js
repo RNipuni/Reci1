@@ -3,7 +3,7 @@ import { View, TextInput, Button, StyleSheet, Image, Alert } from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 
 const AddRecipeForm = ({ navigation, route }) => {
-  const { addRecipe } = route.params; // Get the addRecipe function passed via params
+  const { addRecipe } = route.params; 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [ingredients, setIngredients] = useState('');
@@ -12,22 +12,22 @@ const AddRecipeForm = ({ navigation, route }) => {
 
   const handleAdd = () => {
     if (name.trim()) {
-      addRecipe({ name, description, ingredients, instructions, image }); // Call addRecipe with the new recipe
-      navigation.goBack(); // Navigate back to HomeScreen
+      addRecipe({ name, description, ingredients, instructions, image }); 
+      navigation.goBack(); 
     } else {
       Alert.alert('Error', 'Please enter a recipe name');
     }
   };
 
   const pickImage = async () => {
-    // Request permission to access the gallery
+    
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permission Denied', 'You need to allow access to your photos.');
       return;
     }
 
-    // Open the image picker
+    
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -36,7 +36,7 @@ const AddRecipeForm = ({ navigation, route }) => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri); // Set the selected image URI
+      setImage(result.assets[0].uri); 
     }
   };
 
@@ -68,16 +68,16 @@ const AddRecipeForm = ({ navigation, route }) => {
       />
       
       <Button title="Pick an Image" onPress={pickImage} />
-      {image && <Image source={{ uri: image }} style={styles.image} />} {/* Display selected image */}
-      <Button title="Add Recipe" onPress={handleAdd} color="#FF7043" /> {/* Green color for the button */}
+      {image && <Image source={{ uri: image }} style={styles.image} />} 
+      <Button title="Add Recipe" onPress={handleAdd} color="#FF7043" /> 
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#FAF3E0' }, // Light cream background
+  container: { flex: 1, padding: 16, backgroundColor: '#FAF3E0' }, 
   input: { borderWidth: 1, padding: 12, marginBottom: 12, borderRadius: 8, backgroundColor: '#FFF' },
-  image: { width: 150, height: 150, marginTop: 8, alignSelf: 'center', borderRadius: 10 }, // Rounded corners for the image
+  image: { width: 150, height: 150, marginTop: 8, alignSelf: 'center', borderRadius: 10 }, 
 });
 
 export default AddRecipeForm;
