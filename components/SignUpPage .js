@@ -1,113 +1,70 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { UserRoot } from '../ContextAPI/UserRoot';
 
 const SignUpPage = ({ navigation, onSignUp }) => {
-  const validationSchema = Yup.object({
-    name: Yup.string().required("Name is required"),
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-  });
+    const userObj = {name: '', email: '', password:''} 
+    const [userDetails, setUserDetails] = useState(userObj)
 
-  const handleSignUp = async (values) => {
-    const { name, email, password } = values;
+    const {eventHandler} = useContext(UserRoot)
 
-    try {
-      const response = await fetch("https://your-backend-api.com/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        onSignUp(data); // Add the signed-up user to the global array
-        Alert.alert("Account Created!", `Welcome, ${data.name}`);
-        navigation.navigate("LoginPage");
-      } else {
-        Alert.alert("Sign Up Failed", data.message || "Something went wrong");
+    const userDetailsHandler = (e)=>{
+      const {value, id} = e.target
+      const keyExist = userObj.hasOwnProperty(id)
+      if(keyExist){
+        let obj={}
+        obj[id]= value
+        setUserDetails({...userDetails, ...obj})
       }
-    } catch (error) {
-      Alert.alert("Error", "An error occurred. Please try again.");
+    } 
+    const handleSubmit = ()=>{
+      eventHandler('UserRegistration',userDetails)
+      navigation.navigate("LoginPage")
     }
-  };
-
   return (
     <View style={styles.container}>
-      <Formik
-        initialValues={{ name: "", email: "", password: "" }}
-        validationSchema={validationSchema}
-        onSubmit={handleSignUp}
+      <Text style={styles.header}>Create Your Recipe Account</Text>
+
+      <TextInput
+        placeholder="Name"
+        id="name"
+        value={userDetails.name}
+        onChange={(e)=>userDetailsHandler(e)}
+        style={styles.input}
+      />
+
+      <TextInput
+        placeholder="Email"
+        id='email'
+        value={userDetails.email}
+        onChange={(e)=>userDetailsHandler(e)}
+        style={styles.input}
+        keyboardType="email-address"
+      />
+
+      <TextInput
+        placeholder="Password"
+        id="password"
+        value={userDetails.password}
+        onChange={(e)=>userDetailsHandler(e)}
+        style={styles.input}
+        secureTextEntry
+      />
+
+      <TouchableOpacity
+        style={styles.signUpButton}
+        onPress={()=>handleSubmit()}
       >
-        {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-        }) => (
-          <>
-            <Text style={styles.header}>Create Your Recipe Account</Text>
+        <Text style={styles.signUpButtonText}>Sign Up</Text>
+      </TouchableOpacity>
 
-            <TextInput
-              placeholder="Name"
-              onChangeText={handleChange("name")}
-              onBlur={handleBlur("name")}
-              value={values.name}
-              style={styles.input}
-            />
-            {touched.name && errors.name && (
-              <Text style={styles.error}>{errors.name}</Text>
-            )}
-
-            <TextInput
-              placeholder="Email"
-              onChangeText={handleChange("email")}
-              onBlur={handleBlur("email")}
-              value={values.email}
-              style={styles.input}
-              keyboardType="email-address"
-            />
-            {touched.email && errors.email && (
-              <Text style={styles.error}>{errors.email}</Text>
-            )}
-
-            <TextInput
-              placeholder="Password"
-              onChangeText={handleChange("password")}
-              onBlur={handleBlur("password")}
-              value={values.password}
-              style={styles.input}
-              secureTextEntry
-            />
-            {touched.password && errors.password && (
-              <Text style={styles.error}>{errors.password}</Text>
-            )}
-
-            <TouchableOpacity
-              style={styles.signUpButton}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.signUpButtonText}>Sign Up</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => navigation.navigate("LoginPage")}>
-              <Text style={styles.loginText}>
-                Already have an account? Login
-              </Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </Formik>
+      <TouchableOpacity onPress={() => navigation.navigate("LoginPage")}>
+        <Text style={styles.loginText}>
+          Already have an account? Login
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
