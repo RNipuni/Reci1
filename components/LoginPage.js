@@ -33,7 +33,7 @@ const LoginPage = ({ navigation }) => {
       navigation.navigate("Home")
     }
     else{
-      Alert.alert("Error", "email or password is incorrect");
+      alert("Error", "email or password is incorrect");
     }
   } 
   return (
