@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Image, Alert } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Image, Alert, ScrollView, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 const AddRecipeForm = ({ navigation, route }) => {
@@ -20,14 +20,12 @@ const AddRecipeForm = ({ navigation, route }) => {
   };
 
   const pickImage = async () => {
-    
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permission Denied', 'You need to allow access to your photos.');
       return;
     }
 
-    
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -41,7 +39,7 @@ const AddRecipeForm = ({ navigation, route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <TextInput
         placeholder="Recipe Name"
         value={name}
@@ -53,31 +51,74 @@ const AddRecipeForm = ({ navigation, route }) => {
         value={description}
         onChangeText={setDescription}
         style={styles.input}
+        multiline
       />
       <TextInput
         placeholder="Ingredients"
         value={ingredients}
         onChangeText={setIngredients}
         style={styles.input}
+        multiline
       />
       <TextInput
         placeholder="Instructions"
         value={instructions}
         onChangeText={setInstructions}
         style={styles.input}
+        multiline
       />
-      
-      <Button title="Pick an Image" onPress={pickImage} />
+
+      <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+        <Text style={styles.imageButtonText}>Pick an Image</Text>
+      </TouchableOpacity>
       {image && <Image source={{ uri: image }} style={styles.image} />} 
-      <Button title="Add Recipe" onPress={handleAdd} color="#FF7043" /> 
-    </View>
+
+      <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
+        <Text style={styles.addButtonText}>Add Recipe</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#FAF3E0' }, 
-  input: { borderWidth: 1, padding: 12, marginBottom: 12, borderRadius: 8, backgroundColor: '#FFF' },
-  image: { width: 150, height: 150, marginTop: 8, alignSelf: 'center', borderRadius: 10 }, 
+  container: { padding: 16, backgroundColor: '#FAF3E0' },
+  input: { 
+    borderWidth: 1, 
+    padding: 12, 
+    marginBottom: 16, 
+    borderRadius: 8, 
+    backgroundColor: '#FFF',
+  },
+  image: { 
+    width: 150, 
+    height: 150, 
+    marginTop: 8, 
+    alignSelf: 'center', 
+    borderRadius: 10, 
+    marginBottom: 16
+  },
+  imageButton: {
+    backgroundColor: '#FF7043',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 16
+  },
+  imageButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold'
+  },
+  addButton: {
+    backgroundColor: '#4CAF50',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16
+  },
+  addButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold'
+  }
 });
 
 export default AddRecipeForm;

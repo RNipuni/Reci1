@@ -1,86 +1,111 @@
-import React from 'react';
-import { 
-  View, 
-  TextInput, 
-  Button, 
-  StyleSheet, 
-  Text, 
-  TouchableOpacity, 
-  Alert 
-} from 'react-native';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
+import React from "react";
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { Formik } from "formik";
+import * as Yup from "yup";
 
 const LoginPage = ({ navigation }) => {
   // Validation schema using Yup
   const validationSchema = Yup.object({
-    email: Yup.string().email('Invalid email format').required('Email is required'),
-    password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
   });
 
   const handleLogin = async (values) => {
     const { email, password } = values;
-  
+
     try {
-      const response = await fetch('https://your-backend-api.com/login', {
-        method: 'POST',
+      const response = await fetch("https://your-backend-api.com/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
-        Alert.alert('Login Successful!', `Welcome, ${data.name}`);
-        navigation.navigate('Home'); // Correct navigation
+        Alert.alert("Login Successful!", `Welcome, ${data.name}`);
+        navigation.navigate("Home"); // Correct navigation
       } else {
-        Alert.alert('Login Failed', data.message || 'Invalid email or password');
+        Alert.alert(
+          "Login Failed",
+          data.message || "Invalid email or password"
+        );
       }
     } catch (error) {
-      Alert.alert('Error', 'An error occurred. Please try again.');
+      Alert.alert("Error", "An error occurred. Please try again.");
     }
   };
-  
-  
 
   return (
     <View style={styles.container}>
       <View style={styles.overlay}>
         <Formik
-          initialValues={{ email: '', password: '' }}
+          initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema}
           onSubmit={handleLogin}
         >
-          {({ handleChange, handleBlur, handleLogin, values, errors, touched }) => (
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
             <>
               <Text style={styles.header}>Welcome to RecipeApp</Text>
 
               <TextInput
                 placeholder="Email"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
                 value={values.email}
                 style={styles.input}
                 keyboardType="email-address"
               />
-              {touched.email && errors.email && <Text style={styles.error}>{errors.email}</Text>}
+              {touched.email && errors.email && (
+                <Text style={styles.error}>{errors.email}</Text>
+              )}
 
               <TextInput
                 placeholder="Password"
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
                 value={values.password}
                 style={styles.input}
                 secureTextEntry
               />
-              {touched.password && errors.password && <Text style={styles.error}>{errors.password}</Text>}
+              {touched.password && errors.password && (
+                <Text style={styles.error}>{errors.password}</Text>
+              )}
 
-              <Button title="Login" onPress={() => navigation.navigate('Home')} color="#FF7043" />
+              <TouchableOpacity
+                style={styles.signUpButton}
+                onPress={() => navigation.navigate("Home")}
+              >
+                <Text style={styles.signUpButtonText}>Login</Text>
+              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigation.navigate('SignUpPage')}>
-                <Text style={styles.signupText}>Don't have an account? Sign up</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("SignUpPage")}
+              >
+                <Text style={styles.signupText}>
+                  Don't have an account? Sign up
+                </Text>
               </TouchableOpacity>
             </>
           )}
@@ -93,41 +118,56 @@ const LoginPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8E7', // Light Cream background for a recipe app feel
-    justifyContent: 'center',
+    backgroundColor: "#FFF8E7", // Light Cream background for a recipe app feel
+    justifyContent: "center",
   },
   overlay: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)', // Slightly lighter transparent overlay
+    backgroundColor: "rgba(255, 255, 255, 0.9)", // Slightly lighter transparent overlay
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 12, // Border radius for the container
     marginHorizontal: 20,
   },
   header: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FF7043', // Deep Orange header text
+    fontWeight: "bold",
+    color: "#FF7043", // Deep Orange header text
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   input: {
     height: 45,
-    borderColor: '#E0E0E0', // Light Gray input fields
+    borderColor: "#E0E0E0", // Light Gray input fields
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 8, // Border radius for input fields
     marginBottom: 15, // Spacing between inputs
     paddingHorizontal: 10,
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
   },
   error: {
-    color: 'red',
+    color: "red",
     fontSize: 14,
     marginBottom: 10,
   },
   signupText: {
-    color: '#007BFF',
+    color: "#007BFF",
     marginTop: 20,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 16,
+  },
+  signUpButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  signUpButton: {
+    height: 50,
+    backgroundColor: "#FF7043",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 12,
+    borderWidth: 2, // Border around the button
+    borderColor: "#FF7043", // Border color matches the button color
+    marginBottom: 15,
   },
 });
 
