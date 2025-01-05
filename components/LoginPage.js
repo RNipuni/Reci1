@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   TextInput,
@@ -10,106 +10,69 @@ import {
 } from "react-native";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { UserRoot } from "../ContextAPI/UserRoot";
 
 const LoginPage = ({ navigation }) => {
-  // Validation schema using Yup
-  const validationSchema = Yup.object({
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-  });
+  const userObj = { email: '', password:''} 
+  const [userDetails, setUserDetails] = useState(userObj)
 
-  const handleLogin = async (values) => {
-    const { email, password } = values;
+  const {user} = useContext(UserRoot)
 
-    try {
-      const response = await fetch("https://your-backend-api.com/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        Alert.alert("Login Successful!", `Welcome, ${data.name}`);
-        navigation.navigate("Home"); // Correct navigation
-      } else {
-        Alert.alert(
-          "Login Failed",
-          data.message || "Invalid email or password"
-        );
-      }
-    } catch (error) {
-      Alert.alert("Error", "An error occurred. Please try again.");
+  const userDetailsHandler = (e)=>{
+    const {value, id} = e.target
+    const keyExist = userObj.hasOwnProperty(id)
+    if(keyExist){
+      let obj={}
+      obj[id]= value
+      setUserDetails({...userDetails, ...obj})
     }
-  };
+  } 
 
+  const loginHandler = ()=>{
+    if(user.email === userDetails.email && user.password === userDetails.password){
+      navigation.navigate("Home")
+    }
+    else{
+      Alert.alert("Error", "email or password is incorrect");
+    }
+  } 
   return (
     <View style={styles.container}>
       <View style={styles.overlay}>
-        <Formik
-          initialValues={{ email: "", password: "" }}
-          validationSchema={validationSchema}
-          onSubmit={handleLogin}
+        <Text style={styles.header}>Welcome to RecipeApp</Text>
+
+        <TextInput
+          placeholder="Email"
+          id='email'
+          style={styles.input}
+          value={userDetails.email}
+          onChange={(e)=>userDetailsHandler(e)}
+          keyboardType="email-address"
+        />
+
+        <TextInput
+          placeholder="Password"
+          id='password'
+          value={userDetails.password}
+          onChange={(e)=>userDetailsHandler(e)}
+          style={styles.input}
+          secureTextEntry
+        />
+
+        <TouchableOpacity
+          style={styles.signUpButton}
+          onPress={() =>loginHandler()}
         >
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-          }) => (
-            <>
-              <Text style={styles.header}>Welcome to RecipeApp</Text>
+          <Text style={styles.signUpButtonText}>Login</Text>
+        </TouchableOpacity>
 
-              <TextInput
-                placeholder="Email"
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
-                value={values.email}
-                style={styles.input}
-                keyboardType="email-address"
-              />
-              {touched.email && errors.email && (
-                <Text style={styles.error}>{errors.email}</Text>
-              )}
-
-              <TextInput
-                placeholder="Password"
-                onChangeText={handleChange("password")}
-                onBlur={handleBlur("password")}
-                value={values.password}
-                style={styles.input}
-                secureTextEntry
-              />
-              {touched.password && errors.password && (
-                <Text style={styles.error}>{errors.password}</Text>
-              )}
-
-              <TouchableOpacity
-                style={styles.signUpButton}
-                onPress={() => navigation.navigate("Home")}
-              >
-                <Text style={styles.signUpButtonText}>Login</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => navigation.navigate("SignUpPage")}
-              >
-                <Text style={styles.signupText}>
-                  Don't have an account? Sign up
-                </Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </Formik>
+        <TouchableOpacity
+          onPress={() =>navigation.navigate("SignUpPage")}
+        >
+          <Text style={styles.signupText}>
+            Don't have an account? Sign up
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
