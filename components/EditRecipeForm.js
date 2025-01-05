@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Text, Image, Alert, ScrollView } from 'react-native';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import * as ImagePicker from 'expo-image-picker';
@@ -12,10 +12,15 @@ const EditRecipeForm = ({ route, navigation }) => {
     description: Yup.string().required('Description is required'),
     ingredients: Yup.string().required('Ingredients are required'),
     instructions: Yup.string().required('Instructions are required'),
-    image: Yup.string().required('Images are required'),
   });
 
   const pickImage = async (setFieldValue) => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'You need to allow access to your photos.');
+      return;
+    }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -34,7 +39,7 @@ const EditRecipeForm = ({ route, navigation }) => {
         description: recipe.description,
         ingredients: recipe.ingredients,
         instructions: recipe.instructions,
-        image: recipe.image
+        image: recipe.image,
       }}
       validationSchema={validationSchema}
       onSubmit={(values) => {
@@ -43,7 +48,7 @@ const EditRecipeForm = ({ route, navigation }) => {
       }}
     >
       {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue }) => (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
           <Text style={styles.header}>Edit Your Recipe</Text>
 
           <TextInput
@@ -88,15 +93,14 @@ const EditRecipeForm = ({ route, navigation }) => {
           >
             <Text style={styles.imagePickerText}>Pick an Image</Text>
           </TouchableOpacity>
-          {values.image ? (
+          {values.image && (
             <Image source={{ uri: values.image }} style={styles.image} />
-          ) : (
-            <Text style={styles.error}>Image is required</Text>
           )}
-          {touched.image && errors.image && <Text style={styles.error}>{errors.image}</Text>}
 
-          <Button onPress={handleSubmit} title="Update Recipe" color="#FF7043" />
-        </View>
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+            <Text style={styles.submitButtonText}>Update Recipe</Text>
+          </TouchableOpacity>
+        </ScrollView>
       )}
     </Formik>
   );
@@ -105,21 +109,21 @@ const EditRecipeForm = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: '#FFF8E7', 
+    backgroundColor: '#FFF8E7',
   },
   header: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#FF7043', 
+    color: '#FF7043',
     marginBottom: 20,
     textAlign: 'center',
   },
   input: {
     height: 45,
-    borderColor: '#E0E0E0', 
+    borderColor: '#E0E0E0',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 15, 
+    marginBottom: 15,
     paddingHorizontal: 10,
     backgroundColor: '#FFF',
   },
@@ -130,7 +134,7 @@ const styles = StyleSheet.create({
   },
   imagePickerButton: {
     backgroundColor: '#FF7043',
-    padding: 10,
+    padding: 12,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 15,
@@ -140,10 +144,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     marginTop: 10,
     borderRadius: 8,
+    alignSelf: 'center',
+  },
+  submitButton: {
+    backgroundColor: '#FF7043',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  submitButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
