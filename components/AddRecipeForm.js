@@ -15,14 +15,14 @@ const AddRecipeForm = ({ navigation, route }) => {
       addRecipe({ name, description, ingredients, instructions, image }); 
       navigation.goBack(); 
     } else {
-      Alert.alert('Error', 'Please enter a recipe name');
+      alert('Error', 'Please enter a recipe name');
     }
   };
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'You need to allow access to your photos.');
+      alert('Permission Denied', 'You need to allow access to your photos.');
       return;
     }
 

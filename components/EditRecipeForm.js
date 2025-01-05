@@ -17,7 +17,7 @@ const EditRecipeForm = ({ route, navigation }) => {
   const pickImage = async (setFieldValue) => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'You need to allow access to your photos.');
+      alert('Permission Denied', 'You need to allow access to your photos.');
       return;
     }
 
